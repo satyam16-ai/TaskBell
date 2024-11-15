@@ -12,6 +12,8 @@ import pystray
 import requests
 import platform
 from plyer import notification
+import speech_recognition as sr
+import wave
 
 # Initialize pygame mixer for playing sounds
 pygame.mixer.init()
@@ -407,6 +409,11 @@ def display_weather():
                  f"Wind: {weather_info['wind']} kph"
         )
 
+
+
+# Add a label to indicate listening status
+
+
 # Main Application Window
 root = tk.Tk()
 root.title("Desktop Notifier App with AI Assistant")
@@ -566,6 +573,70 @@ tk.Button(weather_frame, text="Get Weather", command=display_weather).pack(side=
 
 weather_label = tk.Label(weather_frame, text="", font=("Helvetica", 10))
 weather_label.pack(pady=10)
+
+# Add the voice command button to your UI
+
+
+# Add a label to indicate listening status
+listening_label = tk.Label(root, text="", font=("Helvetica", 10))
+listening_label.pack(pady=10)
+
+# Function to handle voice commands
+def handle_voice_command(command):
+    print(f"Recognized command: {command}")
+    if "stopwatch" in command.lower():
+        open_stopwatch()
+    elif "to-do list" in command.lower():
+        open_todo_list()
+    elif "weather" in command.lower():
+        display_weather()
+    elif "notification" in command.lower():
+        save_notification()
+    else:
+        show_message("Command not recognized")
+
+# Function to recognize voice commands
+def recognize_voice_command():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        listening_label.config(text="Listening for command...")
+        root.update()
+        print("Listening for command...")
+        try:
+            # Adjust for ambient noise
+            recognizer.adjust_for_ambient_noise(source, duration=1)
+            audio = recognizer.listen(source, timeout=15, phrase_time_limit=10)
+            print("Audio captured, recognizing...")
+            
+            # Save audio for debugging
+            with open("audio.wav", "wb") as f:
+                f.write(audio.get_wav_data())
+            
+            # Recognize speech
+            command = recognizer.recognize_google(audio, language="en-US")
+            print(f"Google Speech Recognition thinks you said: {command}")
+            listening_label.config(text="")
+            handle_voice_command(command)
+        except sr.UnknownValueError:
+            listening_label.config(text="")
+            print("Google Speech Recognition could not understand audio")
+            show_message("Sorry, I did not understand the command.")
+        except sr.RequestError as e:
+            listening_label.config(text="")
+            print(f"Could not request results from Google Speech Recognition service; {e}")
+            show_message(f"Could not request results; {e}")
+        except Exception as e:
+            listening_label.config(text="")
+            print(f"An error occurred: {e}")
+            show_message(f"An error occurred: {e}")
+
+# Add the voice command button to your UI
+voice_command_button = tk.Button(root, text="Voice Command", command=recognize_voice_command)
+voice_command_button.pack(pady=10)
+
+# Add a label to indicate listening status
+listening_label = tk.Label(root, text="", font=("Helvetica", 10))
+listening_label.pack(pady=10)
 
 # Start system tray icon
 threading.Thread(target=setup_system_tray, daemon=True).start()
