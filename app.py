@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog, Toplevel
+from tkinter import ttk, messagebox, filedialog, Toplevel, scrolledtext
 import time
 import threading
 from datetime import datetime, timedelta
@@ -187,7 +187,7 @@ def check_notification_time():
             if now == notif_date_time:
                 # Play alarm sound if set
                 alarm_sound_path = values[5]
-                if alarm_sound_path and alarm_sound_path != "None":
+                if (alarm_sound_path and alarm_sound_path != "None"):
                     try:
                         pygame.mixer.music.load(alarm_sound_path)
                         pygame.mixer.music.play()
@@ -409,8 +409,8 @@ def display_weather():
 
 # Main Application Window
 root = tk.Tk()
-root.title("Desktop Notifier App")
-root.geometry("800x600")
+root.title("Desktop Notifier App with AI Assistant")
+root.geometry("800x800")  # Increased height to accommodate the new section
 
 menu_bar = tk.Menu(root)
 root.config(menu=menu_bar)
@@ -467,6 +467,69 @@ tk.Button(frame, text="Save Notification", command=save_notification).grid(row=7
 tk.Button(frame, text="Clear Fields", command=clear_fields).grid(row=7, column=1, padx=5, pady=5)
 tk.Button(frame, text="Delete Notification", command=delete_notification).grid(row=7, column=2, padx=5, pady=5)
 
+# Existing UI elements...
+
+# AI Assistant Frame
+ai_frame = ttk.Frame(root)
+ai_frame.place(relx=0.75, rely=0.05, anchor="n")  # Positioning at the top right
+
+tk.Label(ai_frame, text="AI Personal Assistant", font=("Helvetica", 14)).pack(pady=10)
+
+ai_input_frame = ttk.Frame(ai_frame)
+ai_input_frame.pack(pady=10, fill=tk.X)
+
+tk.Label(ai_input_frame, text="Ask me anything:", font=("Helvetica", 10)).pack(side=tk.LEFT, padx=5)
+ai_query_entry = tk.Entry(ai_input_frame, width=50)
+ai_query_entry.pack(side=tk.LEFT, padx=5)
+
+def get_ai_response():
+    query = ai_query_entry.get()
+    if query:
+        # Your Cohere API key
+        api_key = "d0nqMxyPxnvXaja5bisTk6cKLZwQfmXMgO4lejhb"
+        url = "https://api.cohere.ai/generate"
+        
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "model": "command-xlarge-nightly",  # Ensure the model name is correct
+            "prompt": query,
+            "max_tokens": 50,
+            "temperature": 0.7
+        }
+
+        try:
+            response = requests.post(url, headers=headers, json=data)
+            print("API Response:", response.json())  # Debugging: Print full API response
+
+            if response.status_code == 200:
+                # Extract the response text directly from 'text' key
+                response_json = response.json()
+                ai_response = response_json.get("text", "No response from AI")
+            else:
+                ai_response = f"Error: {response.status_code} - {response.json().get('message', 'Unknown error')}"
+
+            # Display the response
+            ai_response_text.config(state=tk.NORMAL)
+            ai_response_text.insert(tk.END, f"User: {query}\nAI: {ai_response}\n\n")
+            ai_response_text.config(state=tk.DISABLED)
+            ai_query_entry.delete(0, tk.END)
+
+        except Exception as e:
+            ai_response_text.config(state=tk.NORMAL)
+            ai_response_text.insert(tk.END, f"Error: {str(e)}\n")
+            ai_response_text.config(state=tk.DISABLED)
+
+tk.Button(ai_input_frame, text="Submit", command=get_ai_response).pack(side=tk.LEFT, padx=5)
+
+ai_response_text = scrolledtext.ScrolledText(ai_frame, wrap=tk.WORD, height=10, state=tk.DISABLED)
+ai_response_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+# Existing UI elements...
+
 # Create Treeview
 tree = ttk.Treeview(root, columns=("Date", "Time", "Category", "Heading", "Message", "Sound", "Recurrence"), show="headings")
 tree.heading("Date", text="Date")
@@ -491,6 +554,7 @@ threading.Thread(target=start_checking, daemon=True).start()
 # Theme Toggle Button
 theme_toggle_button = tk.Button(root, text="Toggle Theme", command=toggle_theme)
 theme_toggle_button.pack(pady=10)
+
 weather_frame = ttk.Frame(root)
 weather_frame.pack(pady=10)
 
