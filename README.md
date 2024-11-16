@@ -11,6 +11,10 @@ NotifyMate is a versatile desktop notification application designed to help you 
 - **System Tray Integration:** Minimize the application to the system tray and receive notifications even when the app is not in focus.
 - **Theme Toggle:** Switch between light and dark themes to suit your preference.
 
+## Screenshot
+
+![NotifyMate Screenshot](assets/Screenshot%20from%202024-11-16%2019-32-18.png)
+
 ## Installation
 
 ### Prerequisites
