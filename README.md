@@ -10,6 +10,8 @@ NotifyMate is a versatile desktop notification application designed to help you 
 - **Weather Updates:** Get real-time weather updates for your city.
 - **System Tray Integration:** Minimize the application to the system tray and receive notifications even when the app is not in focus.
 - **Theme Toggle:** Switch between light and dark themes to suit your preference.
+- **Voice Commands:** Control the application using voice commands.
+- **AI Personal Assistant:** Get responses to your queries using an AI assistant.
 
 ## Screenshot
 
@@ -25,3 +27,6 @@ NotifyMate is a versatile desktop notification application designed to help you 
 ### Dependencies
 
 Install the required dependencies using pip:
+
+```sh
+pip install -r requirements.txt
