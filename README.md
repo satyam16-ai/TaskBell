@@ -1,6 +1,6 @@
-# NotifyMate
+# Taskbell
 
-NotifyMate is a versatile desktop notification application designed to help you stay organized and on top of your tasks. With NotifyMate, you can set reminders, manage a to-do list, and even keep track of time with a built-in stopwatch. The application features a user-friendly interface built with Tkinter, allowing you to easily schedule notifications with custom messages, alarm sounds, and recurrence options.
+Taskbell is a versatile desktop notification application designed to help you stay organized and on top of your tasks. With NotifyMate, you can set reminders, manage a to-do list, and even keep track of time with a built-in stopwatch. The application features a user-friendly interface built with Tkinter, allowing you to easily schedule notifications with custom messages, alarm sounds, and recurrence options.
 
 ## Features
 
